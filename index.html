@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>玉楼问命 · 陈大师的摊</title>
+<meta name="description" content="陈玉楼，一个能看八字、摇卦、解梦、聊风水的民俗聊天机器人。离线也能用，可选接入大模型。">
+<meta name="author" content="SKY 吴渊博">
+<meta name="theme-color" content="#0b0907">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="玉楼问命">
+      <span class="seal" aria-hidden="true">陈</span>
+      <span class="brand-text">
+        <b>玉楼问命</b>
+        <small>陈大师的摊 · 民俗推演</small>
+      </span>
+    </a>
+
+    <div class="topbar-right">
+      <span class="mode-badge" id="modeBadge" title="当前为本地规则推演">
+        <i></i><span id="modeText">离线推演</span>
+      </span>
+      <button class="icon-btn only-mobile" id="chartBtn" type="button" aria-label="打开命盘">命盘</button>
+      <button class="icon-btn" id="qrBtn" type="button" aria-label="手机访问">手机</button>
+      <button class="icon-btn" id="moreBtn" type="button" aria-label="设置与说明" aria-expanded="false">⋯</button>
+    </div>
+  </header>
+
+  <main class="layout">
+
+    <aside class="side" id="side" aria-label="命盘">
+      <div class="side-inner">
+        <div class="side-head">
+          <span class="mono">MING PAN / 命盘</span>
+          <button class="text-btn only-mobile" id="sideClose" type="button">收起</button>
+        </div>
+        <div id="chartPanel" class="chart-panel">
+          <div class="empty-chart">
+            <div class="empty-ring" aria-hidden="true"><span>命</span></div>
+            <p class="empty-title">命盘未立</p>
+            <p class="empty-desc">报上公历生辰，老夫替你把四柱排出来。填一次，后面就不用再报。</p>
+            <button class="btn btn-primary" id="emptyChartBtn" type="button">填写生辰</button>
+          </div>
+        </div>
+        <div class="side-foot">
+          <div class="privacy">
+            <span class="dot-ok"></span>
+            生辰只存在你的浏览器里，不上传。
+          </div>
+          <div class="side-links">
+            <a href="https://github.com/SKY-code1/yulou#readme" target="_blank" rel="noopener">说明</a>
+            <span>·</span>
+            <a href="https://github.com/SKY-code1/yulou" target="_blank" rel="noopener">GitHub</a>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <section class="chat" aria-label="对话">
+      <div class="chat-scroll" id="scroll">
+        <div class="chat-inner" id="messages" aria-live="polite"></div>
+      </div>
+
+      <div class="composer">
+        <div class="quick" id="quick"></div>
+        <form class="input-row" id="form" autocomplete="off">
+          <textarea id="input" rows="1" placeholder="报生辰、问运势，或者说说昨晚的梦…" aria-label="输入消息"></textarea>
+          <button class="send" id="send" type="submit" aria-label="发送">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+          </button>
+        </form>
+        <p class="disclaimer">民俗文化推演，非科学预测；不替你做决定，也不替你花钱。</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- 手机端命盘抽屉 -->
+<div class="sheet-backdrop" id="sheetBackdrop" hidden></div>
+<div class="sheet" id="sheet" hidden aria-label="命盘抽屉">
+  <div class="sheet-bar"><span></span></div>
+  <div id="sheetContent"></div>
+</div>
+
+<!-- 手机访问 -->
+<div class="modal" id="qrModal" hidden role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+  <div class="modal-card">
+    <button class="modal-close" id="qrClose" type="button" aria-label="关闭">×</button>
+    <span class="eyebrow">手机访问</span>
+    <h3 id="qrTitle">同一 WiFi 下，扫码就能聊</h3>
+    <div class="qr-box" id="qrBox"><div class="qr-loading">正在生成本机地址…</div></div>
+    <p class="qr-url mono" id="qrUrl">—</p>
+    <p class="qr-note" id="qrNote">手机和电脑连同一个 WiFi，用相机扫码打开即可。数据只在两台设备之间。</p>
+  </div>
+</div>
+
+<!-- 设置 / 说明 -->
+<div class="modal" id="moreModal" hidden role="dialog" aria-modal="true" aria-labelledby="moreTitle">
+  <div class="modal-card more-card">
+    <button class="modal-close" id="moreClose" type="button" aria-label="关闭">×</button>
+    <span class="eyebrow">说明</span>
+    <h3 id="moreTitle">这个摊子怎么摆的</h3>
+
+    <div class="more-section">
+      <h4>推演方式</h4>
+      <p>四柱、五行、十神、六十四卦、解梦词条都在前端本地计算；没网也能用。配置大模型后，由它把结果说成“人话”，但数字与卦名不允许改。</p>
+      <p class="mono small" id="llmStatus">大模型：未配置</p>
+    </div>
+
+    <div class="more-section">
+      <h4>数据与隐私</h4>
+      <p>生辰、聊天记录只写在本机 localStorage。清空后不可恢复；“手机访问”只在局域网内，不上公网。</p>
+      <div class="more-actions">
+        <button class="btn btn-ghost" id="clearBtn" type="button">清空本机数据</button>
+        <button class="btn btn-ghost" id="replayBtn" type="button">重新开始</button>
+      </div>
+    </div>
+
+    <div class="more-section">
+      <h4>边界</h4>
+      <p>这是民俗文化的推演与陪聊，不是医疗、法律、投资建议。遇到真问题，找专业的人。</p>
+    </div>
+  </div>
+</div>
+
+<script src="assets/js/vendor/qrcode.js"></script>
+<script>
+// file:// 下浏览器会拦截 ES Module；给一个能看懂的提示，而不是白屏。
+if (location.protocol === "file:") {
+  window.addEventListener("DOMContentLoaded", function () {
+    var app = document.getElementById("app");
+    if (!app) return;
+    app.innerHTML = '<div class="file-note">'
+      + '<span class="seal">陈</span>'
+      + '<h1>还差一步：起个本地服务</h1>'
+      + '<p>浏览器在 <code>file://</code> 下会拦截 ES Module。回到文件夹，双击 <code>start.bat</code>，或者在命令行运行 <code>python server.py</code>，再打开提示的地址。</p>'
+      + '<p class="mono">python server.py --port 8787</p>'
+      + '</div>';
+  });
+}
+</script>
+<script type="module" src="assets/js/app.js"></script>
+</body>
+</html>

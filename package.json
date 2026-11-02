@@ -1,0 +1,11 @@
+{
+  "name": "yulou",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "玉楼问命 · 民俗命理聊天机器人",
+  "scripts": {
+    "test": "node tests/engine.test.js",
+    "serve": "python server.py"
+  }
+}

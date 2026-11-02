@@ -1,0 +1,17 @@
+# 本地密钥
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# 系统
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 截图临时文件（成品图在 docs/）
+shots/
+*.tmp
