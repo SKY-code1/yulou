@@ -185,15 +185,14 @@ node tools/cdp-test.mjs
 
 当前结果：引擎 223 项断言通过，端到端 26 项通过，浏览器控制台无报错。
 
-## 部署到 GitHub Pages
+## 部署与展示
 
-这是纯静态站点，仓库根目录直接发布即可：
+线上展示用的是作品集仓库里的一份静态快照：<https://sky-code1.github.io/yulou/>（同目录 `SKY-code1/sky-code1.github.io/yulou/`）。
 
-1. Settings → Pages → Build and deployment；
-2. Source 选 **Deploy from a branch**；
-3. Branch 选 `main`、目录选 `/ (root)`。
+> 本仓库只放源码。如果在这里再开 GitHub Pages，地址同样是 `/yulou/`，会和作品集里的快照冲突——二选一即可。
+> 想独立部署，建议把仓库改名为 `yulou-demo` 之类，再用 Settings → Pages 发布根目录。
 
-发布后地址是 `https://<用户名>.github.io/yulou/`。没有服务端时，界面会自动隐藏“手机扫码”，其余功能不变。
+没有服务端时，界面会自动隐藏“手机扫码”，其余功能不变。
 
 ## 数据与许可
 
