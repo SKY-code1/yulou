@@ -17,9 +17,13 @@ from __future__ import annotations
 import json
 import os
 import threading
-import winreg
 from datetime import date
 from pathlib import Path
+
+try:
+    import winreg
+except ImportError:  # 非 Windows 环境：跳过环境变量补全
+    winreg = None
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
@@ -32,6 +36,8 @@ LEGACY = ROOT.parent / "legacy"
 
 def load_windows_env() -> None:
     """把 Windows 用户/系统环境变量补进当前进程（无需重启终端）。"""
+    if winreg is None:
+        return
     targets = [
         (winreg.HKEY_CURRENT_USER, "Environment"),
         (winreg.HKEY_LOCAL_MACHINE, r"SYSTEM\CurrentControlSet\Control\Session Manager\Environment"),
