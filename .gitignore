@@ -15,3 +15,6 @@ desktop.ini
 # 截图临时文件（成品图在 docs/）
 shots/
 *.tmp
+
+# v1 虚拟环境
+.venv-v1/

@@ -8,6 +8,18 @@
 
 ![桌面端](docs/chart.jpg)
 
+## 两个版本
+
+| 目录 | 是什么 | 怎么跑 |
+| --- | --- | --- |
+| `legacy/` | 2025 年写的原始 LangChain Agent，**未改动** | 只作对照；依赖原环境（Redis / Qdrant / 原 Key） |
+| `v1/` | 同一套 Agent 的兼容运行版：内存记忆、DeepSeek、本地库说明 | `start_v1.bat` 或 `python v1/server.py` |
+| 根目录 | v2 产品版：零依赖前端推演 | `start.bat` 或 `python server.py` |
+
+v1 证明的是“我会用代码把 Agent 配起来”：5 个工具、6 种情绪、Redis 记忆、FastAPI 接口。
+v2 解决的是“别人怎么打开”：推演搬进浏览器，0 前端依赖，手机扫码就能聊。
+两版都保留，案例页里也是按“旧版 → 迭代版”讲的。
+
 ## 30 秒跑起来
 
 需要 Python 3.10+（只用来起一个静态服务，不装任何第三方库）。
@@ -21,7 +33,7 @@ python server.py
 
 浏览器会自动打开 `http://127.0.0.1:8787/`。手机访问：点右上角「手机」，用相机扫二维码（手机和电脑要在同一个 WiFi）。
 
-也可以完全不启动服务、不走本地：直接访问部署好的 GitHub Pages 版本，推演功能一样可用，只是没有扫码入口，也不能接大模型。
+也可以完全不启动服务、不走本地：把这个静态目录托管到任意静态服务器（作品集里嵌的就是这一版），推演功能一样可用，只是没有扫码入口，也不能接大模型。
 
 > 为什么不建议直接双击 `index.html`：脚本用的是 ES Module，浏览器在 `file://` 下会按跨域策略拦截模块加载，页面会停在静态骨架。起一个静态服务（`start.bat` 或任意 `http.server`）即可。
 
@@ -45,6 +57,22 @@ python server.py
 | OpenAI | `https://api.openai.com/v1` | `gpt-4o-mini` |
 
 `.env` 已在 `.gitignore` 里，不会被提交。模型调用失败时，界面自动回退本地模式，不会卡住。
+
+## 旧版 v1 怎么跑
+
+v1 需要额外依赖（FastAPI + LangChain），第一次跑要装 2–3 分钟：
+
+```powershell
+# 双击 start_v1.bat（首次会自动建 .venv-v1 并安装依赖）
+
+# 或手动
+python -m venv .venv-v1
+.venv-v1\Scripts\python.exe -m pip install -r v1\requirements-v1.txt
+.venv-v1\Scripts\python.exe v1\server.py --port 8790
+```
+
+打开 <http://127.0.0.1:8790/>。Key 从 Windows 环境变量读取（`API_KEY_D` 或 `V1_OPENAI_KEY`），
+详细说明和 6 处兼容修改见 [`v1/README.md`](v1/README.md)。
 
 ## 能做什么
 
@@ -100,7 +128,7 @@ python server.py
 
 ## 为什么把推演放在前端
 
-第一版（见 `legacy/`）是 FastAPI + LangChain + Redis + Qdrant + 三个外部 API。能跑的时候很兴奋，但换一台电脑就打不开：Key 没了、Redis 没装、向量库路径不对。
+第一版（见 `legacy/`）是 FastAPI + LangChain + Redis + Qdrant + 三个外部 API。能跑的时候很兴奋，但换一台电脑就打不开：Key 没了、Redis 没装、向量库路径不对。为了把这段经历展示出来，`v1/` 补了 6 处兼容修改，让它在没有 Redis 的机器上也能跑；原始文件仍留在 `legacy/` 作对照。
 
 第二版换了一个判断：**这个产品的核心不是“接了哪个模型”，而是“我想算一卦的时候，30 秒内能不能打开”。**
 
@@ -134,9 +162,11 @@ yulou/
 │     ├─ data/                节气表、六十四卦、解梦词条
 │     └─ vendor/qrcode.js     二维码（MIT）
 ├─ server.py                  静态服务 + 可选大模型代理（标准库）
-├─ start.bat                  Windows 一键启动
+├─ start.bat                  v2 · Windows 一键启动
+├─ start_v1.bat               v1 · 首次自动装依赖并启动 Agent
 ├─ .env.example               大模型配置样例
-├─ legacy/                    2025 年的 LangChain 版本（不参与运行）
+├─ v1/                        2025 Agent 的兼容运行版（FastAPI + 展示页）
+├─ legacy/                    2025 年的原始代码（未改动，不参与运行）
 ├─ tools/                     数据生成、截图、端到端检查
 ├─ tests/                     八字样本与引擎测试
 └─ docs/                      截图

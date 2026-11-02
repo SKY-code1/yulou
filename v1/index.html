@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>陈大师 v1 · LangChain Agent（2025）</title>
+<meta name="description" content="2025 年用 LangChain 配置的算命 Agent 原始版本：情绪判断、工具调用、记忆。">
+<meta name="theme-color" content="#070a09">
+<link rel="icon" href="../assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<header class="v1-top">
+  <div class="v1-brand">
+    <span class="mark">陈</span>
+    <div>
+      <b>陈大师 v1</b>
+      <small>LANGCHAIN AGENT · 2025</small>
+    </div>
+  </div>
+  <div class="v1-top-right">
+    <span class="status"><i></i><span id="statusText">连接中</span></span>
+    <a class="v2-link" href="http://127.0.0.1:8787/" target="_blank" rel="noopener" title="先运行根目录的 start.bat">v2 产品版 ↗</a>
+  </div>
+</header>
+
+<main class="v1-layout">
+
+  <aside class="v1-side">
+    <section>
+      <h2>// 运行参数</h2>
+      <dl class="kv">
+        <dt>model</dt><dd id="kModel">—</dd>
+        <dt>base</dt><dd id="kBase">—</dd>
+        <dt>memory</dt><dd>in-memory</dd>
+        <dt>key</dt><dd id="kKey">—</dd>
+      </dl>
+    </section>
+
+    <section>
+      <h2>// 一轮对话</h2>
+      <ol class="chain">
+        <li><span>01</span>用户输入</li>
+        <li><span>02</span>情绪判断（6 类）</li>
+        <li><span>03</span>Agent 选工具</li>
+        <li><span>04</span>工具返回结果</li>
+        <li><span>05</span>陈玉楼口吻作答</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>// 工具</h2>
+      <ul class="tools">
+        <li>search <em>SerpAPI</em></li>
+        <li>bazi_cesuan <em>八字排盘</em></li>
+        <li>yaogua <em>每日摇卦</em></li>
+        <li>jiemeng <em>周公解梦</em></li>
+        <li class="off">local_db <em>未接入</em></li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>// 原始代码</h2>
+      <p class="code-links">
+        <a href="/code/server.py" target="_blank">server.py</a>
+        <a href="/code/MYtools.py" target="_blank">MYtools.py</a>
+        <a href="/docs/legacy" target="_blank">legacy/README</a>
+      </p>
+    </section>
+
+    <p class="side-note">
+      这是 2025 年我自己配置的版本。为了在这台没有 Redis 的机器上演示，
+      只做了兼容修改：记忆换成内存、模型换成 DeepSeek、本地向量库用说明代替。
+      Agent / Prompt / 情绪判断 / 工具调用都保留原样。改动清单见
+      <a href="/docs/patches" target="_blank">v1/README</a>。
+    </p>
+  </aside>
+
+  <section class="v1-chat">
+    <div class="v1-log" id="log">
+      <div class="sys-line">[boot] 陈大师 v1 · LangChain Agent · memory=in-memory</div>
+      <div class="sys-line">[boot] 情绪判断 → Agent → 工具 → 回答；完整 verbose 日志在服务端控制台。</div>
+    </div>
+
+    <div class="v1-composer">
+      <div class="quick" id="quick">
+        <button data-q="你是谁，介绍一下自己">你是谁</button>
+        <button data-q="我叫林小满，女，公历1998年8月15日上午9点半出生，帮我看看今年运势">看八字</button>
+        <button data-q="帮我摇一卦，问问最近的事业">摇一卦</button>
+        <button data-q="我昨晚梦见一条大蛇追我，后来掉进水里">解个梦</button>
+      </div>
+      <form id="form" autocomplete="off">
+        <span class="prompt">&gt;</span>
+        <input id="input" type="text" placeholder="跟 2025 年的陈大师说句话…" aria-label="输入消息">
+        <button id="send" type="submit">发送</button>
+      </form>
+      <p class="v1-disclaimer">原始 Agent 用 DeepSeek 驱动；民俗内容仅供娱乐，不构成任何建议。</p>
+    </div>
+  </section>
+
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
